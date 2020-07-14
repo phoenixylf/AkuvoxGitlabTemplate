@@ -15,8 +15,8 @@
 
     // Your code here...
 
-    window.onload = function(){
-        //1、PR提交 模板
+    //1、PR提交 模板
+    function autoCompletePRTemplate(){
         var prStr ="# StoryXXX 或 BugXXX 或 一句话说明原因\n"+
             "\n"+
             "## 修改原因描述\n"+
@@ -39,9 +39,9 @@
         }else{
             // alert("null merge request")
         }
-
-
-//2、普通需求或bug commit 模板
+    }
+    //2、普通需求或bug commit 模板
+    function autoCompleteBugOrStoryCommitTemplate(){
         var commitStr = "# 标题, 最简洁的描述具体提交的原因, 每次提交只允许写一个,\n"+
             "# M: 修复了啥\n"+
             "# O: 优化了啥\n"+
@@ -55,7 +55,6 @@
             "Modified:\n"+
             "\n"
 
-        //alert(2)
         function getCommitId(){
             var elements = document.getElementsByName("commit_message"), item;
             for (var i = 0, len = elements.length; i < len; i++) {
@@ -76,33 +75,46 @@
             //alert("commit is null");
         }
 
+    }
 
-//3、展开PR合并请求中的（相当于点击按钮展开）
-        var prCommitExpandButton = document.getElementsByClassName("commit-edit-toggle")[0];
-        var isRight = document.getElementsByClassName("s16 ic-chevron-right").length;
-        //存在按钮且图标是向右，则表示为未展开时进行点击达到展开的效果。
-        // alert(isRight);
-        if(prCommitExpandButton != null && isRight == 1){
-            //alert(prCommitExpandButton.aria-label)
-            prCommitExpandButton.click()
-        }
-
-        var prCommitMsgTextArea = document.getElementById("merge-message-edit")
-
+    //3、展开PR合并请求中的（相当于点击按钮展开）
+    function autoExpandAndCompletePRTemplate() {
         var timer = null;
-        var defaultPrCommitMsg
-        function startTimer(){
-            timer = setInterval(checkChange,100)
-        }
-
-        function closeTimer(){
-            //alert("timer is close")
-            if(timer != null){
-                clearInterval(timer);
-                timer = null
+        function checkRightIsExist() {
+            var prCommitExpandButton = document.getElementsByClassName("commit-edit-toggle")[0];
+            var isRight = document.getElementsByClassName("s16 ic-chevron-right").length;
+            //alert("====="+isRight+"==prCommitExpandButton="+prCommitExpandButton)
+            if(isRight == 1 && prCommitExpandButton != null){
+                prCommitExpandButton.click()
+                //展开后，进行模板填充
+                autoCompletePRCommitTemplate()
+                //关闭定时器
+                if(timer != null){
+                    clearInterval(timer);
+                    timer = null;
+                }
             }
         }
+       //如果第一次进来，相关图标未加载，则开启定时器进行轮询，直到加载完成为止
+        timer = setInterval(checkRightIsExist,100);
+    }
 
+    /**
+     * 备注：
+     * 该模板填充遇到一个问题，gitlab会检测输入框中的内容是否被浏览器外部人为修改。
+     * 如果没有被修改，则会定时更新输入框中的内容；
+     * 而通过脚本修改输入框的内容，gitlab还会定时更新输入框的内容，所以会有现象，
+     * 即输入框的内容改完之后又变回来
+     *
+     * 无法找到gitlab js中相关的变量，所以目前新增一个定时器，时时检测输入框的内容，
+     * 如果内容被gitlab修改，则脚本会再次改回来，达到绕过这个问题的效果。
+     * */
+    function autoCompletePRCommitTemplate(){
+        var prCommitMsgTextArea = document.getElementById("merge-message-edit")
+        var defaultPrCommitMsg
+        function startTimer(){
+            setInterval(checkChange,100)//页面销毁才会停止，如果当前页面就需要一直跑
+        }
         function checkChange() {
             //alert("timer is start")
             if(prCommitMsgTextArea.value != defaultPrCommitMsg){
@@ -112,7 +124,6 @@
         }
 
         if(prCommitMsgTextArea != null){
-
             var msg = prCommitMsgTextArea.value
             if(msg != null){
                 //返回一个数组，判断数组的长度，大于3，取第三行数据为title
@@ -132,14 +143,14 @@
                 }
 
             }
-            //alert("title = "+title);
 
         }else{
             //alert("pr commit msg is null")
-            closeTimer()
         }
+    }
 
-//4、PR 审核模板
+    //4、PR 审核模板
+    function autoCompletePRExamineAndVerifyTemplate(){
         var prExamineAndVerifyStr="| PR检查项目 | 是否具备 |\n"+
             "| :------------: | :------------: |\n"+
             "| 修改原因描述 | √/× |\n"+
@@ -158,6 +169,18 @@
 
             // alert("null merge request")
         }
+    }
+
+    //窗口文件加载完成后，进行检测及模板填充
+    window.onload = function(){
+        //1、PR提交 模板
+        autoCompletePRTemplate();
+        //2、普通需求或bug commit 模板
+        autoCompleteBugOrStoryCommitTemplate();
+        //3、展开PR合并请求中的（相当于点击按钮展开）
+        autoExpandAndCompletePRTemplate();
+        //4、PR 审核模板
+        autoCompletePRExamineAndVerifyTemplate()
 
     }
 
