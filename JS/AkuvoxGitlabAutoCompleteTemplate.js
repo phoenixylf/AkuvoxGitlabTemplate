@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Akuvox Gitlab AutoComplete Template
-// @namespace    http://tampermonkey.net/
+// @namespace    http://www.akuvox.com/
 // @version      0.2
 // @description  try to take over the world!
 // @author       phoenixylf
