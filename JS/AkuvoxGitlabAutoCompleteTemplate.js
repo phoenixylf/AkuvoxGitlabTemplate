@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Akuvox Gitlab AutoComplete Template
 // @namespace    http://www.akuvox.com/
-// @version      0.2
+// @version      0.4
 // @description  try to take over the world!
 // @author       phoenixylf
 // @match        http://192.168.13.20/*
@@ -33,7 +33,7 @@
             "\n";
         //alert(1);
         var element_merge_request = document.getElementById("merge_request_description")
-        if(element_merge_request != null){
+        if(element_merge_request !== null){
             element_merge_request.value=prStr;
             element_merge_request.style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 305px;"
         }else{
@@ -59,7 +59,7 @@
             var elements = document.getElementsByName("commit_message"), item;
             for (var i = 0, len = elements.length; i < len; i++) {
                 item = elements[i];
-                if (item.id && item.id.indexOf("commit_message-") == 0) {
+                if (item.id && item.id.indexOf("commit_message-") === 0) {
                     // item.id starts with commit_message-
                     //alert(item.id)
                     return item.id;
@@ -68,7 +68,7 @@
         }
         var commitId = getCommitId();
         var element_commit = document.getElementById(commitId)
-        if(element_commit != null){
+        if(element_commit !== null){
             element_commit.value=commitStr;
             element_commit.rows=12;
         }else{
@@ -84,12 +84,12 @@
             var prCommitExpandButton = document.getElementsByClassName("commit-edit-toggle")[0];
             var isRight = document.getElementsByClassName("s16 ic-chevron-right").length;
             //alert("====="+isRight+"==prCommitExpandButton="+prCommitExpandButton)
-            if(isRight == 1 && prCommitExpandButton != null){
+            if(isRight == 1 && prCommitExpandButton !== null){
                 prCommitExpandButton.click()
                 //展开后，进行模板填充
                 autoCompletePRCommitTemplate()
                 //关闭定时器
-                if(timer != null){
+                if(timer !== null){
                     clearInterval(timer);
                     timer = null;
                 }
@@ -123,9 +123,9 @@
             }
         }
 
-        if(prCommitMsgTextArea != null){
+        if(prCommitMsgTextArea !== null){
             var msg = prCommitMsgTextArea.value
-            if(msg != null){
+            if(msg !== null){
                 //返回一个数组，判断数组的长度，大于3，取第三行数据为title
                 var msg_split_lists = msg.split("\n");
                 //alert(msg_split_lists.length)
@@ -162,7 +162,7 @@
             "\n";
 
         var element_pr_examine_and_verify = document.getElementById("note-body")
-        if(element_pr_examine_and_verify != null){
+        if(element_pr_examine_and_verify !== null){
             element_pr_examine_and_verify.value=prExamineAndVerifyStr;
             element_pr_examine_and_verify.style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 210px;"
         }else{
